@@ -599,6 +599,7 @@ proc z85_decode*(dest: ptr uint8; string: cstring): ptr uint8 {.
 
 type
   EZmq* = object of Exception ## exception that is raised if something fails
+    code*: cint
   TConnection* {.pure, final.} = object ## a connection
     c*: PContext  ## the embedded context
     s*: PSocket   ## the embedded socket
@@ -607,7 +608,8 @@ proc zmqError*() {.noinline, noreturn.} =
   ## raises EZmq with error message from `zmq.strerror`.
   var e: ref EZmq
   new(e)
-  e.msg = $strerror(errno())
+  e.code = errno()
+  e.msg = $strerror(e.code)
   raise e
 
 
